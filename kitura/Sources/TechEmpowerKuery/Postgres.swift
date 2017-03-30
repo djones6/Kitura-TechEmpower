@@ -15,7 +15,6 @@
  */
 
 import Foundation
-//import PostgreSQL
 import LoggerAPI
 import SwiftKuery
 import SwiftKueryPostgreSQL
@@ -105,15 +104,15 @@ func getRandomRow() -> ([String:Int]?, AppError?) {
     defer {
       releaseConnection(connection: dbConn)
     }
-
     let rnd = randomNumberGenerator(dbRows)
+ 
     let query = Select(world.randomNumber, from: world)
         .where(world.id == rnd)
 
     dbConn.execute(query: query) { result in
         if let resultSet = result.asResultSet {
             guard result.success else {
-                errRes = AppError.DBKueryError("Query failed - status \(result.asError)")
+                errRes = AppError.DBKueryError("Query failed - status \(String(describing: result.asError))")
                 return
             }
 
@@ -148,16 +147,13 @@ func updateRow(id: Int) throws  -> AppError? {
         releaseConnection(connection: dbConn)
     }
     let rndValue = randomNumberGenerator(maxValue)
-    //let query = "EXECUTE tfbupdate(\(id), \(rndValue))"
-    //var updatePrep = "PREPARE tfbupdate (int, int) AS UPDATE World SET randomNumber=$2 WHERE id=$1"
-    
     let query = Update(world, set: [(world.randomNumber, rndValue)])
         .where(world.id == id)
     var errRes: AppError? = nil
     dbConn.execute(query: query) { result in
-        if let resultSet = result.asResultSet {
+        if result.asResultSet != nil {
             guard result.success else {
-                    errRes = AppError.DBKueryError("Query failed - status \(result.asError)")
+                    errRes = AppError.DBKueryError("Query failed - status \(String(describing: result.asError))")
                     return
             }
 

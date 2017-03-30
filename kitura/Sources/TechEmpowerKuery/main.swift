@@ -157,7 +157,7 @@ router.get("/create") {
     }
     if let resultSet = dbResult.asResultSet {
         guard dbResult.success else {
-            try response.status(.badRequest).send("<pre>Error: query '\(query)' - error \(dbResult.asError)</pre>").end()
+            try response.status(.badRequest).send("<pre>Error: query '\(query)' - error \(String(describing: dbResult.asError))</pre>").end()
             return
         }
     }
@@ -178,7 +178,7 @@ router.get("/delete") {
     }
     if let resultSet = dbResult.asResultSet {
         guard dbResult.success else {
-            try response.status(.badRequest).send("<pre>Error: query '\(query)' - error \(dbResult.asError)</pre>").end()
+            try response.status(.badRequest).send("<pre>Error: query '\(query)' - error \(String(describing: dbResult.asError))</pre>").end()
             return
         }
     }
@@ -202,7 +202,7 @@ router.get("/populate") {
         
         if let resultSet = dbResult.asResultSet {
             guard dbResult.success else {
-                try response.status(.badRequest).send("<pre>Error: query '\(query)' - error \(dbResult.asError)</pre>").end()
+                try response.status(.badRequest).send("<pre>Error: query '\(query)' - error \(String(describing: dbResult.asError))</pre>").end()
                 return
             }
         }
