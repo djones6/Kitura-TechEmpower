@@ -41,6 +41,7 @@ let maxValue = 10000
 var queryPrep = "PREPARE tfbquery (int) AS SELECT randomNumber FROM World WHERE id=$1"
 var updatePrep = "PREPARE tfbupdate (int, int) AS UPDATE World SET randomNumber=$2 WHERE id=$1"
 
+
 //class World: Table {
 //    let tableName = "World"
 //    
@@ -61,7 +62,7 @@ func releaseConnection(connection: Connection) {
 }
 
 func generateConnection() -> Connection? {
-    var dbConn = PostgreSQLConnection(host: dbHost, port: dbPort,
+    let dbConn = PostgreSQLConnection(host: dbHost, port: dbPort,
                                       options: [.databaseName(dbName),
                                       .userName(dbUser), .password(dbPass) ])
 
@@ -71,6 +72,24 @@ func generateConnection() -> Connection? {
             return
         }
     }
+    
+    dbConn.execute(queryPrep){ result in
+        if result.asResultSet != nil {
+            guard result.success else {
+                Log.error("Query failed - status \(String(describing: result.asError))")
+                return
+            }
+        }
+    }
+    dbConn.execute(updatePrep){ result in
+        if result.asResultSet != nil {
+            guard result.success else {
+                Log.error("Query failed - status \(String(describing: result.asError))")
+                return
+            }
+        }
+    }
+    
     return dbConn
 }
 

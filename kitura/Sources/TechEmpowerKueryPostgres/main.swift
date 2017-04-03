@@ -114,6 +114,7 @@ router.get("/updates") {
     var results: [[String:Int]] = []
     for i in 1...numQueries {
         var result = getRandomRow()
+        
         guard let dict = result.0 else {
             guard let err = result.1 else {
                 Log.error("Unknown Error")
@@ -124,9 +125,10 @@ router.get("/updates") {
             try response.status(.badRequest).send("Error: \(err)").end()
             return
         }
+
         do {
             var error: AppError?
-            try error = updateRow(id: dict["id"]!)
+            try error = updateRow(id: dict["id"]!)            
             if let appError = error {
                 throw appError
             }
@@ -136,6 +138,7 @@ router.get("/updates") {
         }
         results.append(dict)
     }
+    
     
     // Return JSON representation of array of results
     try response.status(.OK).send(json: JSON(results)).end()
