@@ -16,27 +16,38 @@
 #
 
 #
-# Script to create a ramdisk and host a Postgres database suitable for running
-# the TechEmpower benchmarks.
+# Script to create a ramdisk and host a temporary Postgres database suitable for
+# running the TechEmpower benchmarks.
 #
 # Prereqs:
 # 1) Postgres is installed and PG_BIN var (below) set appropriately
-# 2) FrameworkBenchmarks project is checked out in the current directory, ie.
+# 2) FrameworkBenchmarks project is checked out, ie.
 #    git clone https://github.com/TechEmpower/FrameworkBenchmarks.git
+#     - ensure TFB_PROJECT is updated with the location on your system
 # 3) You have permission to sudo (required to mount/umount a ramdisk)
+# 4) You have 2gb ram free to hold the ramdisk
 # 
 # If you want to access the test database remotely (ie. not localhost), then
 # make sure you update the access controls (see below) to include a rule that
 # lets your remote server talk to this one.
 #
 
+### Customize these values to suit your system
+# Name of temporary postgres database cluster to create
 DBNAME="testdb"
+# Port to accept connections
+DB_PORT=5433
+# Location of Postgres installation on your system
 PG_BIN="/usr/lib/postgresql/9.5/bin"
+# Location of FrameworkBenchmarks project on your system
+TFB_PROJECT="$HOME/FrameworkBenchmarks"
+###
+
 MOUNTPOINT="$HOME/ramdisk_${DBNAME}"
 MOUNTPOINT_TMPFS="${MOUNTPOINT}_tmpfs"
 DB_DIR="${MOUNTPOINT}/${DBNAME}"
 SOCKET_DIR="${MOUNTPOINT}/var/run/postgresql"
-DB_PORT=5433
+DB_SCRIPTS="$TFB_PROJECT/toolset/setup/linux/databases/postgresql"
 
 function start {
   # Create ramdisk
@@ -71,8 +82,8 @@ unix_socket_directories = '${SOCKET_DIR}'
   ${PG_BIN}/pg_ctl -D ${DB_DIR} -l ${MOUNTPOINT}/logfile start
 
   # Generate content
-  psql -h ${SOCKET_DIR} -p ${DB_PORT} -d postgres -f $PWD/FrameworkBenchmarks/config/create-postgres-database.sql
-  psql -h ${SOCKET_DIR} -p ${DB_PORT} -U benchmarkdbuser -f $PWD/FrameworkBenchmarks/config/create-postgres.sql hello_world
+  psql -h ${SOCKET_DIR} -p ${DB_PORT} -d postgres -f $DB_SCRIPTS/create-postgres-database.sql
+  psql -h ${SOCKET_DIR} -p ${DB_PORT} -U benchmarkdbuser -f $DB_SCRIPTS/create-postgres.sql hello_world
 }
 
 function stop {
