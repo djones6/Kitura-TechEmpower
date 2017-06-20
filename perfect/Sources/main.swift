@@ -132,11 +132,12 @@ var routes = Routes()
 
 // TechEmpower test #6: Plaintext
 routes.add(method: .get, uri: "/plaintext", handler: {
-	request, response in
-		response.setHeader(.contentType, value: "text/plain")
-		response.appendBody(string: "Hello, World!")
-		response.completed()
-	}
+    request, response in
+        response.setHeader(.custom(name: "Server"), value: "Perfect")
+        response.setHeader(.contentType, value: "text/plain")
+        response.appendBody(string: "Hello, World!")
+        response.completed()
+    }
 )
 
 // TechEmpower test #1: JSON 
