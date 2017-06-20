@@ -1,23 +1,25 @@
 import Vapor
 import HTTP
 
-let app = Droplet()
-app.log.enabled = [.error, .fatal]
+let drop = try Droplet()
+drop.log.enabled = [.error, .fatal]
 
-// TechEmpower test 0: plaintext
-app.get("plaintext") { request in
+// TechEmpower test 6: plaintext
+drop.get("plaintext") { request in
     var response = Response(status: .ok, body: "Hello, World!")
+    response.headers["Server"] = "Vapor"
     response.headers["Content-Type"] = "text/plain"
     return response
 }
 
 // TechEmpower test 1: JSON serialization
-app.get("json") { request in
-    return try JSON(node: [
+drop.get("json") { request in
+    let json = try JSON(node: [
             "message":"Hello, World!"
         ])
+    var response = try Response(status: .ok, json: json)
+    response.headers["Server"] = "Vapor"
+    return response
 }
 
-// Print what link to visit for default port
-print("Visit http://localhost:8080")
-app.run()
+try drop.run()
