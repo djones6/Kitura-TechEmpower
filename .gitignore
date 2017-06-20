@@ -1,3 +1,7 @@
 .DS_Store
 */Packages_*
 */build_*
+*/runs/
+*/compares/
+kitura_0*/
+kitura_1*/
