@@ -23,3 +23,6 @@ To test that the Kitura implementation is running:
 `curl http://127.0.0.1:8080/plaintext` should return `Hello, World!`
 
 ## Benchmarking
+For help on getting started running these benchmarks, see the readme in the Kitura subdirectory.
+
+You may also find the following project useful for running comparisons and regression tests on web frameworks: https://github.com/djones6/Swift-Bench
