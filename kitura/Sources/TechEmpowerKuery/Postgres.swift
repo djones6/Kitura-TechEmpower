@@ -18,7 +18,6 @@ import Foundation
 import LoggerAPI
 import SwiftKuery
 import SwiftKueryPostgreSQL
-import SwiftKuerySQLite
 
 #if os(Linux)
     import Glibc
@@ -27,7 +26,6 @@ import SwiftKuerySQLite
 #endif
 
 
-let db = ProcessInfo.processInfo.environment["DB"] ?? "postgres"
 let dbHost = ProcessInfo.processInfo.environment["DB_HOST"] ?? "localhost"
 let dbPort = Int32(ProcessInfo.processInfo.environment["DB_PORT"] ?? "5432") ?? 5432
 let dbName = "hello_world"
@@ -58,16 +56,10 @@ func releaseConnection(connection: Connection) {
 
 func generateConnection() -> Connection? {
     var dbConn: Connection
-    switch db {
-    case "sqlite":
-        dbConn = SQLiteConnection(filename: "myDB.db")
-    default:
-        // use postgres db by defualt
-        dbConn = PostgreSQLConnection(host: dbHost, port: dbPort,
-                                      options: [.databaseName(dbName),
-                                                .userName(dbUser), .password(dbPass) ])
-    }
-    
+    dbConn = PostgreSQLConnection(host: dbHost, port: dbPort,
+                                  options: [.databaseName(dbName),
+                                            .userName(dbUser), .password(dbPass) ])
+
     
     dbConn.connect() { error in
         if let error = error {
